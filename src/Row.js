@@ -142,12 +142,20 @@ export default class Row extends Component {
     },
   });
 
-  componentWillReceiveProps(nextProps) {
-    if (!this._active && !shallowEqual(this._location, nextProps.location)) {
-      const animated = !this._active && nextProps.animated;
-      this._relocate(nextProps.location, animated);
+  componentDidUpdate() {
+    const {animated, location} = this.props;
+
+    if (!this._active && !shallowEqual(this._location, location)) {
+      this._relocate(location, !this._active && animated);
     }
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   if (!this._active && !shallowEqual(this._location, nextProps.location)) {
+  //     const animated = !this._active && nextProps.animated;
+  //     this._relocate(nextProps.location, animated);
+  //   }
+  // }
 
   shouldComponentUpdate(nextProps, nextState) {
     return this.props.disabled !== nextProps.disabled ||
@@ -197,6 +205,7 @@ export default class Row extends Component {
       Animated.timing(this._animatedLocation, {
         toValue: nextLocation,
         duration: 300,
+        useNativeDriver: false
       }).start(() => {
         this._isAnimationRunning = false;
       });
